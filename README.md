@@ -1,8 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## What this is
 A Stripe test project on how to use Stripe with Next.js.
+
 This is bootstraped with examples for most of the core function (checkout, payment, customer portal, etc.)
+
 For my own references and hopefully help other folks too
 
 ## Getting Started
