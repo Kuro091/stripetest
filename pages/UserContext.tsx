@@ -24,7 +24,7 @@ const Provider = ({ children }: { children: ReactNode }) => {
 
   const login = async () => {
     supabase.auth.signInWithOAuth({
-      provider: 'github',
+      provider: 'google',
     });
   };
 

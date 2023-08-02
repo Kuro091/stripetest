@@ -7,6 +7,8 @@ For my own references and hopefully help other folks too
 
 ## Getting Started
 
+You'll need a supabase account and a stripe account to get started.
+
 First, run the development server:
 
 ```bash

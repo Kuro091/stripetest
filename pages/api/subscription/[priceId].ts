@@ -16,6 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } = await supabase.auth.getUser();
 
     const {
+      //@ts-ignore
       data: { stripe_customer },
     } = await supabase.from('profile').select('stripe_customer').eq('id', user?.id).single();
 
