@@ -49,7 +49,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .eq('stripe_customer', (event.data.object as any).customer);
   }
 
-  console.log('here 3', event.type);
 
   res.send({ type: event.type });
 };

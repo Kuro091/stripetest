@@ -1,7 +1,7 @@
 import { supabase } from '@/utils/supabase';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
-import { ReactNode, createContext, Context, useState, useEffect, useContext } from 'react';
+import { ReactNode, createContext, useState, useEffect, useContext } from 'react';
 
 type AppUser =
   | (User & { is_subscribed: boolean; stripe_customer: string; interval: string })
@@ -24,7 +24,7 @@ const Provider = ({ children }: { children: ReactNode }) => {
 
   const login = async () => {
     supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'github',
     });
   };
 
@@ -37,33 +37,46 @@ const Provider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AppUser>();
   const [isLoading, setIsLoading] = useState(true);
 
+  // useEffect(() => {
+  //   if (user) {
+  //     const subscription = supabase
+  //       .channel('table-filter-changes')
+  //       .on(
+  //         'postgres_changes',
+  //         {
+  //           event: 'UPDATE',
+  //           schema: 'public',
+  //           table: 'profile',
+  //           filter: `id = '${user.id}'`,
+  //         },
+
+  //         (payload) => {
+  //           setUser({ ...user, ...payload.new });
+  //         }
+  //       )
+  //       .subscribe();
+
+  //     return () => {
+  //       subscription.unsubscribe();
+  //     };
+  //   }
+  // }, [user]);
+
   useEffect(() => {
-    if (user) {
-      const subscription = supabase
-        .channel('table-filter-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'profile',
-            filter: `id = '${user.id}'`,
-          },
+    console.log('getting session');
+    const getSession = async () => {
+      console.log('getting session 2');
+      const { data, error } = await supabase.auth.getSession();
 
-          (payload) => {
-            setUser({ ...user, ...payload.new });
-          }
-        )
-        .subscribe();
+      console.log('data', data);
+      console.log('error', error);
+    };
 
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [user]);
+    getSession();
 
-  useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         // delete cookies on sign out
         const expires = new Date(0).toUTCString();
@@ -93,6 +106,10 @@ const Provider = ({ children }: { children: ReactNode }) => {
       setUser(undefined);
       setIsLoading(false);
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const exposed = {
